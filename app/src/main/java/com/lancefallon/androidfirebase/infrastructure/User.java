@@ -1,5 +1,7 @@
 package com.lancefallon.androidfirebase.infrastructure;
 
+import java.util.Map;
+
 /**
  * Created by lancefallon on 8/17/16.
  */
@@ -8,13 +10,16 @@ public class User {
     private String username;
     private String displayName;
     private String avatarUrl;
-    private boolean isLoggedIn;
-    private boolean hasPassword;
+    private Boolean isLoggedIn;
+    private Boolean hasPassword;
     private String email;
 
-    public User(){}
+    public User(){
+        this.isLoggedIn = false;
+        this.hasPassword = false;
+    }
 
-    public User(int id, String username, String displayName, String avatarUrl, boolean isLoggedIn, boolean hasPassword, String email) {
+    public User(int id, String username, String displayName, String avatarUrl, Boolean isLoggedIn, Boolean hasPassword, String email) {
         this.id = id;
         this.username = username;
         this.displayName = displayName;
@@ -56,19 +61,19 @@ public class User {
         this.avatarUrl = avatarUrl;
     }
 
-    public boolean isLoggedIn() {
+    public Boolean isLoggedIn() {
         return isLoggedIn;
     }
 
-    public void setIsLoggedIn(boolean isLoggedIn) {
+    public void setIsLoggedIn(Boolean isLoggedIn) {
         this.isLoggedIn = isLoggedIn;
     }
 
-    public boolean isHasPassword() {
+    public Boolean isHasPassword() {
         return hasPassword;
     }
 
-    public void setHasPassword(boolean hasPassword) {
+    public void setHasPassword(Boolean hasPassword) {
         this.hasPassword = hasPassword;
     }
 
@@ -78,5 +83,13 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void updateFromMap(Map<String, String> map) {
+        this.setUsername(map.get("username"));
+        this.setDisplayName(map.get("displayName"));
+        this.setAvatarUrl(map.get("avatarUrl"));
+        this.setEmail(map.get("email"));
+        this.setIsLoggedIn(true);
     }
 }
