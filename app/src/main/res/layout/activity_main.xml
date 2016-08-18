@@ -46,5 +46,9 @@
         android:text="Add value to Firebase"
         android:id="@+id/main_activity_sendDataBtn"/>
 
+    <Button android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sign out"
+        android:id="@+id/activity_main_signoutButton" />
 
 </LinearLayout>

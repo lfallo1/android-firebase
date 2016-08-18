@@ -1,48 +1,41 @@
 package com.lancefallon.androidfirebase.infrastructure;
 
-import java.util.Map;
+import android.net.Uri;
+
+import com.google.firebase.auth.FirebaseUser;
+
+import java.net.URL;
 
 /**
  * Created by lancefallon on 8/17/16.
  */
 public class User {
-    private int id;
-    private String username;
+    private String uid;
     private String displayName;
-    private String avatarUrl;
-    private Boolean isLoggedIn;
-    private Boolean hasPassword;
     private String email;
+    private Uri photoUrl;
+    private Boolean hasPassword;
+    private Boolean isLoggedIn;
+
+    public User(FirebaseUser firebaseUser, Boolean hasPassword){
+        this.setEmail(firebaseUser.getEmail());
+        this.setPhotoUrl(firebaseUser.getPhotoUrl());
+        this.setDisplayName(firebaseUser.getDisplayName());
+        this.setUid(firebaseUser.getUid());
+        this.hasPassword = hasPassword;
+        this.isLoggedIn = true;
+    }
 
     public User(){
         this.isLoggedIn = false;
-        this.hasPassword = false;
     }
 
-    public User(int id, String username, String displayName, String avatarUrl, Boolean isLoggedIn, Boolean hasPassword, String email) {
-        this.id = id;
-        this.username = username;
-        this.displayName = displayName;
-        this.avatarUrl = avatarUrl;
-        this.isLoggedIn = isLoggedIn;
-        this.hasPassword = hasPassword;
-        this.email = email;
+    public String getUid() {
+        return uid;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getDisplayName() {
@@ -53,30 +46,6 @@ public class User {
         this.displayName = displayName;
     }
 
-    public String getAvatarUrl() {
-        return avatarUrl;
-    }
-
-    public void setAvatarUrl(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
-    }
-
-    public Boolean isLoggedIn() {
-        return isLoggedIn;
-    }
-
-    public void setIsLoggedIn(Boolean isLoggedIn) {
-        this.isLoggedIn = isLoggedIn;
-    }
-
-    public Boolean isHasPassword() {
-        return hasPassword;
-    }
-
-    public void setHasPassword(Boolean hasPassword) {
-        this.hasPassword = hasPassword;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -85,11 +54,27 @@ public class User {
         this.email = email;
     }
 
-    public void updateFromMap(Map<String, String> map) {
-        this.setUsername(map.get("username"));
-        this.setDisplayName(map.get("displayName"));
-        this.setAvatarUrl(map.get("avatarUrl"));
-        this.setEmail(map.get("email"));
-        this.setIsLoggedIn(true);
+    public Uri getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(Uri photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+
+    public Boolean getHasPassword() {
+        return hasPassword;
+    }
+
+    public void setHasPassword(Boolean hasPassword) {
+        this.hasPassword = hasPassword;
+    }
+
+    public Boolean getIsLoggedIn() {
+        return isLoggedIn;
+    }
+
+    public void setIsLoggedIn(Boolean isLoggedIn) {
+        this.isLoggedIn = isLoggedIn;
     }
 }

@@ -11,7 +11,7 @@ public abstract class BaseAuthenticatedActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(!application.getAuth().getUser().isLoggedIn()){
+        if(!application.getAuth().getUser().getIsLoggedIn()){
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
