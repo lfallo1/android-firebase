@@ -20,6 +20,10 @@ public class FirebaseApplication extends Application {
         Firebase.setAndroidContext(this);
 
         //set user on app start
+        //Note that there is a bogus error: E/DynamiteModule: Failed to load module descriptor class: Didn't find class "com.google.android.gms.dynamite.descriptors.com.google.firebase.auth.ModuleDescriptor"
+        //Firebase has said this is logged as an error by mistake and is really just a debug. Unfortunately, it causes the android app to show an error saying "App has stopped."
+        //More cool firebase stuff.
+        //http://stackoverflow.com/questions/37370258/failed-to-load-module-descriptor-class-didnt-find-class-com-google-android-gm
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if(firebaseUser != null){
             auth.signinWithEmailAndPassword(firebaseUser);
