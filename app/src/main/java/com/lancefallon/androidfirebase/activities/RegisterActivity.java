@@ -1,27 +1,29 @@
 package com.lancefallon.androidfirebase.activities;
 
-import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.lancefallon.androidfirebase.R;
 import com.lancefallon.androidfirebase.activities.base.BaseActivity;
+import com.lancefallon.androidfirebase.infrastructure.FirebaseApplication;
 
 public class RegisterActivity extends BaseActivity implements View.OnClickListener {
 
     private String TAG = getClass().getName();
-    private FirebaseAuth mAuth;
     private EditText mEmailText;
     private EditText mPasswordText;
+
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,16 +34,23 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         mEmailText = (EditText)findViewById(R.id.register_activity_email);
         mPasswordText = (EditText)findViewById(R.id.register_activity_password);
 
-        Integer resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-        if (resultCode == ConnectionResult.SUCCESS) {
-//Do what you want
-        } else {
-            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(resultCode, this, 0);
-            if (dialog != null) {
-//This dialog will help the user update to the latest GooglePlayServices
-                dialog.show();
+        final FirebaseApplication firebaseApplication = this.application;
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+                if (firebaseUser != null) {
+                    firebaseApplication.getAuth().signinWithEmailAndPassword(firebaseUser);
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + firebaseUser.getUid());
+                    finishLogin();
+                } else {
+                    // User is signed out
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                }
             }
-        }
+        };
+        mAuth.addAuthStateListener(mAuthListener);
     }
 
     @Override
@@ -67,5 +76,11 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                 }
             });
         }
+    }
+
+    protected void finishLogin(){
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
+        return;
     }
 }

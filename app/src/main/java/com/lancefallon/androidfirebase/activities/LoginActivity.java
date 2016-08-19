@@ -78,9 +78,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     }
 
     public void login(){
-        String email = emailText.getText().toString();
-        String password = passwordText.getText().toString();
-        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this);
+        if(emailText.getText().length() > 0 && passwordText.getText().length() > 0){
+            String email = emailText.getText().toString();
+            String password = passwordText.getText().toString();
+            mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this);
+            return;
+        }
+        Toast.makeText(this, "Please enter both your email and password", Toast.LENGTH_SHORT).show();
     }
 
     //handle on clicks
