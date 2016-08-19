@@ -22,7 +22,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     private static final String TAG = "LoginActivity";
 
-    private Button loginButton;
     private EditText emailText;
     private EditText passwordText;
     private FirebaseAuth mAuth;
@@ -39,8 +38,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         emailText = (EditText)findViewById(R.id.login_activity_emailText);
         passwordText = (EditText)findViewById(R.id.login_activity_password);
-        loginButton = (Button)findViewById(R.id.login_activity_loginButton);
-        loginButton.setOnClickListener(this);
+        findViewById(R.id.login_activity_loginButton).setOnClickListener(this);
         findViewById(R.id.login_activity_registerButton).setOnClickListener(this);
 
         //setup listener for auth state changes
@@ -49,9 +47,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
 
-                //**** There is a known bug with firebase, and this method gets triggered multiple times on a signin.
-                //As of early August Firebase has not released a fix.  So there cannot be ANY logic in this method related to state.
-                //Instead I'm just stuffing any activity logic in the onComplete callback for the actual signin method
+                //**** There is a known bug with firebase, and this method gets triggered repeatedly instead of once on a state change.
+                //As of early August Firebase has not released a fix.  So there cannot be ANY logic in this method related to state / activity lifecycle.
+                //Instead I'm just stuffing any activity logic in the onComplete callback (further down this page).  Quite frankly, this listener could be wiped. it does nothing
                 //http://stackoverflow.com/questions/37674823/firebase-android-onauthstatechanged-fire-twice-after-signinwithemailandpasswor
                 if (firebaseAuth.getCurrentUser() != null) {
                     Log.d(TAG, "onAuthStateChanged:signed_in:");

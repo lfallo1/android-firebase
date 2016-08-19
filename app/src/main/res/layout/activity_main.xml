@@ -15,36 +15,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="LOGGED IN AS"
+        android:text="Logged in as"
+        android:textColor="@color/colorPrimary"
         android:textSize="25dp"
         android:id="@+id/textView2"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:textColor="@color/colorPrimaryDark"
+        android:textStyle="bold"
+        android:gravity="center"
         android:textSize="25dp"
+        android:text="TEST"
         android:id="@+id/main_activity_username"
         android:layout_below="@+id/textView2"
         android:layout_alignParentStart="true"/>
-
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter key..."
-        android:id="@+id/main_activity_keyField"/>
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter something..."
-        android:id="@+id/main_activity_valueField"/>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Add value to Firebase"
-        android:id="@+id/main_activity_sendDataBtn"/>
 
     <Button android:layout_width="match_parent"
         android:layout_height="wrap_content"
