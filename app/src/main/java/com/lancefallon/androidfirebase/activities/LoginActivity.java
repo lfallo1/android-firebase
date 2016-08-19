@@ -13,13 +13,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.lancefallon.androidfirebase.R;
 import com.lancefallon.androidfirebase.activities.base.BaseActivity;
 import com.lancefallon.androidfirebase.infrastructure.FirebaseApplication;
 
 
-public class LoginActivity extends BaseActivity implements View.OnClickListener, OnCompleteListener<AuthResult>  {
+public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String TAG = "LoginActivity";
 
@@ -44,18 +43,19 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         loginButton.setOnClickListener(this);
         findViewById(R.id.login_activity_registerButton).setOnClickListener(this);
 
-        final FirebaseApplication firebaseApplication = this.application;
+        //setup listener for auth state changes
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-                if (firebaseUser != null) {
-                    firebaseApplication.getAuth().signinWithEmailAndPassword(firebaseUser);
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + firebaseUser.getUid());
-                    finishLogin();
+
+                //**** There is a known bug with firebase, and this method gets triggered multiple times on a signin.
+                //As of early August Firebase has not released a fix.  So there cannot be ANY logic in this method related to state.
+                //Instead I'm just stuffing any activity logic in the onComplete callback for the actual signin method
+                //http://stackoverflow.com/questions/37674823/firebase-android-onauthstatechanged-fire-twice-after-signinwithemailandpasswor
+                if (firebaseAuth.getCurrentUser() != null) {
+                    Log.d(TAG, "onAuthStateChanged:signed_in:");
                 } else {
-                    // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
                 }
             }
@@ -81,7 +81,24 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         if(emailText.getText().length() > 0 && passwordText.getText().length() > 0){
             String email = emailText.getText().toString();
             String password = passwordText.getText().toString();
-            mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this);
+            final FirebaseApplication firebaseApplication = this.application;
+            mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(Task<AuthResult> task) {
+                    Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
+
+                    // If sign in fails, display a message to the user. If sign in succeeds
+                    // the auth state listener will be notified and logic to handle the
+                    // signed in user can be handled in the listener.
+                    if (!task.isSuccessful()) {
+                        Log.w(TAG, "signInWithEmail:failed", task.getException());
+                        Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    } else {
+                        firebaseApplication.getAuth().signinWithEmailAndPassword(FirebaseAuth.getInstance().getCurrentUser());
+                        finishLogin();
+                    }
+                }
+            });
             return;
         }
         Toast.makeText(this, "Please enter both your email and password", Toast.LENGTH_SHORT).show();
@@ -97,30 +114,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         }
     }
 
-    //handle signin event
-    @Override
-    public void onComplete(@NonNull Task<AuthResult> task) {
-        Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
-
-        // If sign in fails, display a message to the user. If sign in succeeds
-        // the auth state listener will be notified and logic to handle the
-        // signed in user can be handled in the listener.
-        if (!task.isSuccessful()) {
-            Log.w(TAG, "signInWithEmail:failed", task.getException());
-            Toast.makeText(this, "Auth failed",
-                    Toast.LENGTH_SHORT).show();
-        }
-    }
-
     protected void finishLogin(){
         startActivity(new Intent(this, MainActivity.class));
-        finish();
-        return;
-    }
-
-    protected void finishSignout(){
-        this.application.getAuth().signout();
-        startActivity(new Intent(this, LoginActivity.class));
         finish();
         return;
     }

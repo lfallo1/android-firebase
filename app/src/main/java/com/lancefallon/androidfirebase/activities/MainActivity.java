@@ -18,10 +18,7 @@ import com.lancefallon.androidfirebase.infrastructure.User;
 
 public class MainActivity extends BaseAuthenticatedActivity implements View.OnClickListener {
 
-    private Button mSendDataButton;
     private TextView mLoggedInUser;
-    private EditText mValueField;
-    private EditText mKeyField;
     private Button mSignoutButton;
     private User user;
     private Firebase mRootRef;
@@ -41,10 +38,7 @@ public class MainActivity extends BaseAuthenticatedActivity implements View.OnCl
         user = application.getAuth().getUser();
         mRootRef = new Firebase("https://android-firebase-e43b9.firebaseio.com/");
 
-        mValueField = (EditText)findViewById(R.id.main_activity_valueField);
-        mKeyField = (EditText)findViewById(R.id.main_activity_keyField);
         mLoggedInUser = (TextView)findViewById(R.id.main_activity_username);
-        mSendDataButton = (Button)findViewById(R.id.main_activity_sendDataBtn);
         mSignoutButton = (Button)findViewById(R.id.activity_main_signoutButton);
         mSignoutButton.setOnClickListener(this);
 
@@ -55,15 +49,10 @@ public class MainActivity extends BaseAuthenticatedActivity implements View.OnCl
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-                if (firebaseUser == null) {
 
-                    // User is signed out
+                //can't do any logic in here related to activities / life-cycle, because firebase is really cool & invokes this authStateChange method many times
+                if (firebaseAuth.getCurrentUser() == null) {
                     Log.d("main activity", "onAuthStateChanged:signed_out");
-
-                    firebaseApplication.getAuth().signout();
-                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                    return;
                 }
             }
         };
@@ -88,6 +77,10 @@ public class MainActivity extends BaseAuthenticatedActivity implements View.OnCl
     public void onClick(View v) {
         if(v.getId() == R.id.activity_main_signoutButton){
             mAuth.signOut();
+            application.getAuth().signout();
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            finish();
+            return;
         }
     }
 }

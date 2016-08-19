@@ -34,16 +34,14 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         mEmailText = (EditText)findViewById(R.id.register_activity_email);
         mPasswordText = (EditText)findViewById(R.id.register_activity_password);
 
-        final FirebaseApplication firebaseApplication = this.application;
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-                if (firebaseUser != null) {
-                    firebaseApplication.getAuth().signinWithEmailAndPassword(firebaseUser);
+                if (firebaseAuth.getCurrentUser() != null) {
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + firebaseUser.getUid());
-                    finishLogin();
+
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
@@ -60,6 +58,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
             //TODO validate
             String email = mEmailText.getText().toString();
             String password = mPasswordText.getText().toString();
+            final FirebaseApplication firebaseApplication = this.application;
             mAuth = FirebaseAuth.getInstance();
             mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
@@ -72,6 +71,9 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                     if (!task.isSuccessful()) {
                         Log.w(TAG, "signInWithEmail:failed", task.getException());
                         Toast.makeText(RegisterActivity.this, "Auth failed", Toast.LENGTH_SHORT).show();
+                    } else{
+                        firebaseApplication.getAuth().signinWithEmailAndPassword(FirebaseAuth.getInstance().getCurrentUser());
+                        finishLogin();
                     }
                 }
             });
