@@ -6,8 +6,13 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.lancefallon.androidfirebase.R;
 import com.lancefallon.androidfirebase.activities.base.BaseAuthenticatedActivity;
 import com.lancefallon.androidfirebase.infrastructure.FirebaseApplication;
@@ -18,6 +23,7 @@ public class MainActivity extends BaseAuthenticatedActivity implements View.OnCl
     private Button mSignoutButton;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private ListView mListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +54,23 @@ public class MainActivity extends BaseAuthenticatedActivity implements View.OnCl
             }
         };
         mAuth.addAuthStateListener(mAuthListener);
+
+        mListView = (ListView)findViewById(R.id.main_activity_listview);
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://android-firebase-e43b9.firebaseio.com/Customers");
+
+        FirebaseListAdapter<String> listAdapter = new FirebaseListAdapter<String>(
+                this,
+                String.class,
+                android.R.layout.simple_list_item_1,
+                databaseReference) {
+            @Override
+            protected void populateView(View v, String model, int position) {
+                TextView textView = (TextView)v.findViewById(android.R.id.text1);
+                textView.setText(model);
+            }
+        };
+
+        mListView.setAdapter(listAdapter);
     }
 
     @Override

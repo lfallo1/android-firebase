@@ -1,6 +1,8 @@
 package com.lancefallon.androidfirebase.infrastructure;
 
 import android.app.Application;
+import android.util.Log;
+
 import com.firebase.client.Firebase;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,9 +33,14 @@ public class FirebaseApplication extends Application {
         //Firebase has said this is logged as an error by mistake and is really just a debug. Unfortunately, it causes the android app to show an error saying "App has stopped."
         //More cool firebase stuff.
         //http://stackoverflow.com/questions/37370258/failed-to-load-module-descriptor-class-didnt-find-class-com-google-android-gm
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if(firebaseUser != null){
-            auth.signinWithEmailAndPassword(firebaseUser);
+        try {
+            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (firebaseUser != null) {
+                auth.signinWithEmailAndPassword(firebaseUser);
+            }
+        }
+        catch(Exception e){
+            Log.e("Application", e.getMessage());
         }
     }
 
