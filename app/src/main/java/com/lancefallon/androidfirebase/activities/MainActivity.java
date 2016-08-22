@@ -7,7 +7,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.lancefallon.androidfirebase.R;
 import com.lancefallon.androidfirebase.activities.base.BaseAuthenticatedActivity;
 import com.lancefallon.androidfirebase.infrastructure.FirebaseApplication;
@@ -18,6 +21,7 @@ public class MainActivity extends BaseAuthenticatedActivity implements View.OnCl
     private Button mSignoutButton;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +39,7 @@ public class MainActivity extends BaseAuthenticatedActivity implements View.OnCl
 
         String name = application.getAuth().getUser().getDisplayName() != null ? application.getAuth().getUser().getDisplayName() : application.getAuth().getUser().getEmail();
         mLoggedInUser.setText(name);
+
         final FirebaseApplication firebaseApplication = this.application;
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -48,6 +53,9 @@ public class MainActivity extends BaseAuthenticatedActivity implements View.OnCl
             }
         };
         mAuth.addAuthStateListener(mAuthListener);
+
+        databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://android-firebase-e43b9.firebaseio.com/Customers");
+
     }
 
     @Override
